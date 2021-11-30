@@ -1,0 +1,21 @@
+{
+  "name": "wonderland",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "dotenv ./node_modules/.bin/cypress run --browser chrome --headed --config-file ./cypress.json"
+  },
+  "author": "jeffDevelops",
+  "license": "ISC",
+  "dependencies": {
+    "cypress": "^9.1.0",
+    "cypress-wait-until": "^1.7.2",
+    "dotenv": "^10.0.0",
+    "typescript": "^4.5.2"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.10",
+    "dotenv-cli": "^4.1.1"
+  }
+}

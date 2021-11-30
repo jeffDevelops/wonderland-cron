@@ -1,0 +1,10 @@
+{
+  "TIME Price": "unitPriceTIME",
+  "TVL": "totalValueLocked",
+  "Current Index": "currentIndex",
+  "Backing per $TIME": "backingPerTIME",
+  "Market Cap": "marketCapitalization",
+  "APY": "annualPercentageYield",
+  "Treasury Balance": "treasuryBalance",
+  "Runway": "runway"
+}

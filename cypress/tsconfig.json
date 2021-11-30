@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "types": ["cypress", "cypress-wait-until"],
+    "target": "es5",
+    "lib": ["ES2021", "DOM"],
+    "resolveJsonModule": true
+  },
+  "include": ["**/*.ts"]
+}
