@@ -36,7 +36,10 @@ To visually see what the Cypress script does, open Cypress and run the integrati
 ```
 npm run in-browser
 ```
-Once Cypress has opened, click the integration test in the list (it's the only one, currently).
+Once Cypress has opened, click the "scrape-dashboard.ts" integration test in the list (it's the only one, currently). The scraper should work up until the point where it makes its `POST` request, at which point you'll see errors if you haven't configured an API to post to.
+
+Sometimes, Cypress flakes out and can't connect to Chrome. It gives you the option to select Electron at the top right of its test suite window that I've had better luck with. Or, you can quit Chrome and restart the scraper and sometimes that works. I saw three separate closed issues on the Cypress repo with the same problem, so it seems like they're unable to reproduce the problem.
+
 
 
 

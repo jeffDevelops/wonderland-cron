@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "dotenv ./node_modules/.bin/cypress run --browser chrome --headed --config-file ./cypress.json"
+    "start": "dotenv ./node_modules/.bin/cypress run --config-file ./cypress.json",
+    "in-browser": "dotenv ./node_modules/.bin/cypress open  --config-file ./cypress.json",
+    "cron": "./node_modules/.bin/cypress install && npm run start"
   },
   "author": "jeffDevelops",
   "license": "ISC",
