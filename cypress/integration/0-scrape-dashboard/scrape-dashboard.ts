@@ -68,10 +68,12 @@ describe('Scrape dashboard', () => {
             },
           }).then((response) => {
             if (response.body.errors) {
-              console.log(response.body.errors)
+              console.log(JSON.stringify(response.body.errors))
 
-              cy.task('log', response.body.errors)
+              cy.log(JSON.stringify(response.body.errors))
             }
+
+            console.log(response.body.errors)
 
             expect(response.body.errors).to.equal(undefined)
           })
