@@ -25,32 +25,33 @@ describe('Scrape dashboard', () => {
               let nextPromise = await acc
 
               const labelNode = Cypress.$(`.card-title:contains(${current})`)
+              const stringValue =
+                labelNode.siblings('.card-value')[0].textContent
+
               const value = (() => {
-                // Format / type values appropriately
-
-                if (current === 'APY') {
-                  return parseFloat(
-                    labelNode
-                      .siblings('.card-value')[0]
-                      .textContent.replaceAll(/[\$,%]/g, '')
-                  )
+                const formatFloat = (stringValue: string) => {
+                  const parsed = stringValue.replaceAll(/[\$\,]/g, '')
+                  return parseFloat(parsed)
                 }
 
-                if (current === 'Runway') {
-                  return parseFloat(
-                    labelNode
-                      .siblings('.card-value')[0]
-                      .textContent.replaceAll(/(?![\d\.].*)/g, '')
-                  )
+                switch (current) {
+                  case 'APY':
+                  case 'Runway':
+                  case 'Current Index':
+                  case 'TIME Price':
+                  case 'Backing per $TIME':
+                    return formatFloat(stringValue)
+                  default:
+                    return stringValue
                 }
-
-                return labelNode.siblings('.card-value')[0].textContent
               })()
 
               return { ...nextPromise, [dashboardSchema[current]]: value }
             },
             Promise.resolve({})
           )
+
+          console.log({ payload })
 
           cy.request({
             url: Cypress.env('WONDERLAND_API_URL'),
@@ -69,11 +70,8 @@ describe('Scrape dashboard', () => {
           }).then((response) => {
             if (response.body.errors) {
               console.log(JSON.stringify(response.body.errors))
-
               cy.log(JSON.stringify(response.body.errors))
             }
-
-            console.log(response.body.errors)
 
             expect(response.body.errors).to.equal(undefined)
           })
