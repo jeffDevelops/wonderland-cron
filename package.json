@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "export NODE_OPTIONS=--openssl-legacy-provider; dotenv ./node_modules/.bin/cypress run --config-file ./cypress.json",
-    "in-browser": "export NODE_OPTIONS=--openssl-legacy-provider; dotenv ./node_modules/.bin/cypress open  --config-file ./cypress.json",
+    "start": "dotenv ./node_modules/.bin/cypress run --config-file ./cypress.json",
+    "in-browser": "dotenv ./node_modules/.bin/cypress open  --config-file ./cypress.json",
     "cron": "./node_modules/.bin/cypress install && npm run start"
   },
   "author": "jeffDevelops",
@@ -19,5 +19,8 @@
   "devDependencies": {
     "@types/node": "^16.11.10",
     "dotenv-cli": "^4.1.1"
+  },
+  "engines": {
+    "node": "^14.15 || ^16.13"
   }
 }
