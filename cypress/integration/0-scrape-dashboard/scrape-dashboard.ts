@@ -67,6 +67,9 @@ describe('Scrape dashboard', () => {
               },
             },
           }).then((response) => {
+            if (response.body.errors) {
+              console.log(JSON.stringify(response.body.errors))
+            }
             expect(response.body.errors).to.equal(undefined)
           })
         })
