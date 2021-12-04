@@ -9,73 +9,91 @@ describe('Scrape dashboard', () => {
   })
 
   it('scrapes the dashboard', () => {
-    // Wait for the dashboard to load
-    cy.get('.dashboard-view').should('be.visible', { timeout: 15000 })
+    let retries = 0
 
-    // Assert the expected layout
-    cy.waitUntil(() =>
-      cy
-        .get('.dashboard-view .dashboard-infos-wrap .MuiGrid-container')
-        .children()
-        .should('have.length', 8)
-        .then(async () => {
-          // Assert all values present in the DOM (page hasn't been reworked)
-          const payload: Payload = await Object.keys(dashboardSchema).reduce(
-            async (acc: Promise<Payload>, current: string) => {
-              let nextPromise = await acc
+    retry()
 
-              const labelNode = Cypress.$(`.card-title:contains(${current})`)
-              const stringValue =
-                labelNode.siblings('.card-value')[0].textContent
+    function retry() {
+      retries++
+      cy.reload(true)
 
-              const value = (() => {
-                const formatFloat = (stringValue: string) => {
-                  const parsed = stringValue.replaceAll(/[\$\,]/g, '')
-                  return parseFloat(parsed)
-                }
+      // Wait for the dashboard to load
+      cy.get('.dashboard-view').should('be.visible', { timeout: 15000 })
 
-                switch (current) {
-                  case 'APY':
-                  case 'Runway':
-                  case 'Current Index':
-                  case 'TIME Price':
-                  case 'Backing per $TIME':
-                    return formatFloat(stringValue)
-                  default:
-                    return stringValue
-                }
-              })()
+      // Assert the expected layout
+      cy.waitUntil(() =>
+        cy
+          .get('.dashboard-view .dashboard-infos-wrap .MuiGrid-container')
+          .children()
+          .should('have.length', 8)
+          .then(async () => {
+            // Assert all values present in the DOM (page hasn't been reworked)
+            const payload: Payload = await Object.keys(dashboardSchema).reduce(
+              async (acc: Promise<Payload>, current: string) => {
+                let nextPromise = await acc
 
-              return { ...nextPromise, [dashboardSchema[current]]: value }
-            },
-            Promise.resolve({})
-          )
+                const labelNode = Cypress.$(`.card-title:contains(${current})`)
+                const stringValue =
+                  labelNode.siblings('.card-value')[0].textContent
 
-          console.log(JSON.stringify(payload))
+                const value = (() => {
+                  const formatFloat = (stringValue: string) => {
+                    const parsed = stringValue.replaceAll(/[\$\,]/g, '')
+                    return parseFloat(parsed)
+                  }
 
-          cy.request({
-            url: Cypress.env('WONDERLAND_API_URL'),
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${Cypress.env('WONDERLAND_API_KEY')}`,
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-            },
-            body: {
-              query: POST_DASHBOARD_UPDATE,
-              variables: {
-                data: payload,
+                  switch (current) {
+                    case 'APY':
+                    case 'Runway':
+                    case 'Current Index':
+                    case 'TIME Price':
+                    case 'Backing per $TIME':
+                      return formatFloat(stringValue)
+                    default:
+                      return stringValue
+                  }
+                })()
+
+                return { ...nextPromise, [dashboardSchema[current]]: value }
               },
-            },
-          }).then((response) => {
-            if (response.body.errors) {
-              console.log(JSON.stringify(response.body.errors))
-              cy.log(JSON.stringify(response.body.errors))
+              Promise.resolve({})
+            )
+
+            console.log(JSON.stringify(payload))
+            console.log(payload)
+
+            if (Object.values(payload).some((value) => !value)) {
+              if (retries === 20) {
+                throw new Error('Retries exceeded')
+              }
+
+              return retry()
             }
 
-            expect(response.body.errors).to.equal(undefined)
+            cy.request({
+              url: Cypress.env('WONDERLAND_API_URL'),
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${Cypress.env('WONDERLAND_API_KEY')}`,
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+              },
+              body: {
+                query: POST_DASHBOARD_UPDATE,
+                variables: {
+                  data: payload,
+                },
+              },
+            }).then((response) => {
+              if (response.body.errors) {
+                console.log(JSON.stringify(response.body.errors))
+                cy.log(JSON.stringify(response.body.errors))
+              }
+
+              expect(response.body.errors).to.equal(undefined)
+            })
           })
-        })
-    )
+      )
+    }
   })
 })
