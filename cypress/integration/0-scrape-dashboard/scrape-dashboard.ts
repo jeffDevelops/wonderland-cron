@@ -51,7 +51,7 @@ describe('Scrape dashboard', () => {
             Promise.resolve({})
           )
 
-          console.log({ payload })
+          console.log(JSON.stringify(payload))
 
           cy.request({
             url: Cypress.env('WONDERLAND_API_URL'),
